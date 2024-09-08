@@ -1,5 +1,6 @@
 h2,h3 {
     text-align: center;
+    padding: 0;
 }
 #board {
     width: 600px;
@@ -87,7 +88,7 @@ h2,h3 {
         border: none;
         outline: none;
         cursor: pointer;
-        margin: 0 150px;
+        margin: 0 8rem;
     }
     
     .button-container button img {

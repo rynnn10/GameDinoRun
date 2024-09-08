@@ -1,6 +1,7 @@
 var isMoving = true;
 var isPaused = false;
 var isJumping = false; // Flag untuk memeriksa apakah Dino sedang melompat
+var backgroundMusic = document.getElementById("backgroundMusic"); // Dapatkan elemen audio
 
 function setBackgroundMoving() {
   if (isMoving && !isPaused) {
@@ -24,6 +25,8 @@ function resetGame() {
   document.getElementById("dino").setAttribute("class", "");
   document.getElementById("box").style.marginLeft = "600px";
   document.getElementById("score").innerHTML = "0";
+  backgroundMusic.currentTime = 0;
+  backgroundMusic.play();
   setBackgroundMoving();
   setBoxMoving();
 }
@@ -45,6 +48,8 @@ function setBoxMoving() {
         dino.offsetTop + 50 <= box.offsetTop + 50 &&
         dino.offsetLeft <= box.offsetLeft + 50
       ) {
+        var collisionSfx = document.getElementById("collisionSfx");
+        collisionSfx.play();
         Swal.fire({
           title: "Game Over!",
           text: "Score Anda: " + document.getElementById("score").innerHTML,
@@ -57,6 +62,7 @@ function setBoxMoving() {
         });
         dino.setAttribute("class", "freeze");
         isMoving = false;
+        backgroundMusic.pause(); // Pause backsound saat game over
       } else {
         setBoxMoving();
       }
@@ -103,6 +109,7 @@ document.getElementById("pauseButton").addEventListener("click", function () {
   document.getElementById("resumeButton").style.display = "inline";
   var dino = document.getElementById("dino");
   dino.setAttribute("class", "freeze");
+  backgroundMusic.pause(); // Pause backsound saat game di-pause
 });
 
 document.getElementById("resumeButton").addEventListener("click", function () {
@@ -113,4 +120,5 @@ document.getElementById("resumeButton").addEventListener("click", function () {
   dino.setAttribute("class", "");
   setBackgroundMoving(); // Lanjutkan background
   setBoxMoving(); // Lanjutkan pergerakan box
+  backgroundMusic.play(); // Play backsound saat game di-resume
 });

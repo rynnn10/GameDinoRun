@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body>
-    <h2>Dino Run</h2>
+    <h2>DINO RUN</h2>
     <h3>Score : <span id="score">0</span></h3>
     <div id="board" style="background-position: 0px">
       <div id="area">
@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="button-container">
-        <button id="jumpButton"><img src="images/upBtn.png" alt="Jump" /></button>
+      <button id="jumpButton"><img src="images/upBtn.png" alt="Jump" /></button>
       <button id="pauseButton">
         <img src="images/pause.png" alt="Pause" />
       </button>
@@ -29,7 +29,8 @@
         <img src="images/play.png" alt="Resume" />
       </button>
     </div>
-
+    <audio id="backgroundMusic" src="backsound.mp3" autoplay loop></audio>
+    <audio id="collisionSfx" src="mati.mp3"></audio>
     <script type="text/javascript" src="game.js"></script>
   </body>
 </html>
