@@ -14,6 +14,7 @@ function setBackgroundMoving() {
         parseInt(document.getElementById("score").innerHTML) + 1;
       setBackgroundMoving();
     }, 5);
+    backgroundMusic.play();
   }
 }
 setBackgroundMoving();
