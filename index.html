@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Dino Run by RIYAN</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <h2>Dino Run</h2>
+    <h3>Score : <span id="score">0</span></h3>
+    <div id="board" style="background-position: 0px">
+      <div id="area">
+        <div id="dino"></div>
+        <div id="box" style="margin-left: 600px"></div>
+      </div>
+    </div>
+    <div class="button-container">
+        <button id="jumpButton"><img src="images/upBtn.png" alt="Jump" /></button>
+      <button id="pauseButton">
+        <img src="images/pause.png" alt="Pause" />
+      </button>
+      <button id="resumeButton" style="display: none">
+        <img src="images/play.png" alt="Resume" />
+      </button>
+    </div>
+
+    <script type="text/javascript" src="game.js"></script>
+  </body>
+</html>
