@@ -3,6 +3,11 @@ var isPaused = false;
 var isJumping = false; // Flag untuk memeriksa apakah Dino sedang melompat
 var backgroundMusic = document.getElementById("backgroundMusic"); // Dapatkan elemen audio
 
+// Mulai memutar musik latar saat game dimulai
+window.onload = function () {
+  backgroundMusic.play(); // Otomatis memulai musik latar ketika halaman dimuat
+};
+
 function setBackgroundMoving() {
   if (isMoving && !isPaused) {
     setTimeout(function () {
@@ -14,9 +19,9 @@ function setBackgroundMoving() {
         parseInt(document.getElementById("score").innerHTML) + 1;
       setBackgroundMoving();
     }, 5);
-    backgroundMusic.play();
   }
 }
+
 setBackgroundMoving();
 
 function resetGame() {
@@ -26,8 +31,8 @@ function resetGame() {
   document.getElementById("dino").setAttribute("class", "");
   document.getElementById("box").style.marginLeft = "600px";
   document.getElementById("score").innerHTML = "0";
-  backgroundMusic.currentTime = 0;
-  backgroundMusic.play();
+  backgroundMusic.currentTime = 0; // Setel ulang waktu musik latar
+  backgroundMusic.play(); // Mulai ulang musik latar
   setBackgroundMoving();
   setBoxMoving();
 }
@@ -50,7 +55,7 @@ function setBoxMoving() {
         dino.offsetLeft <= box.offsetLeft + 50
       ) {
         var collisionSfx = document.getElementById("collisionSfx");
-        collisionSfx.play();
+        collisionSfx.play(); // Mainkan efek suara tabrakan
         Swal.fire({
           title: "Game Over!",
           text: "Score Anda: " + document.getElementById("score").innerHTML,
@@ -63,7 +68,7 @@ function setBoxMoving() {
         });
         dino.setAttribute("class", "freeze");
         isMoving = false;
-        backgroundMusic.pause(); // Pause backsound saat game over
+        backgroundMusic.pause(); // Pause musik latar saat game over
       } else {
         setBoxMoving();
       }
@@ -71,55 +76,3 @@ function setBoxMoving() {
   }, 5);
 }
 setBoxMoving();
-
-function jump() {
-  if (!isPaused && !isJumping) {
-    // Pastikan dino tidak bisa lompat lagi jika sudah melompat
-    isJumping = true; // Set flag bahwa Dino sedang melompat
-    var dino = document.getElementById("dino");
-    dino.style.marginTop = "30px";
-    dino.setAttribute("class", "freeze");
-    setTimeout(function () {
-      dino.style.marginTop = "170px"; // Dino kembali mendarat
-      dino.setAttribute("class", "");
-      isJumping = false; // Setelah mendarat, reset flag agar bisa lompat lagi
-    }, 800); // Lama lompatan Dino
-  }
-}
-
-// Event listener untuk tombol panah atas (keyboard)
-window.addEventListener("keyup", function (e) {
-  if (e.keyCode == 38 && !isPaused) {
-    // Kode untuk tombol panah atas, dicek jika tidak pause
-    jump();
-  }
-});
-
-// Event listener untuk tombol jump pada layar
-document.getElementById("jumpButton").addEventListener("click", function () {
-  if (!isPaused) {
-    // Hanya loncat jika tidak di-pause
-    jump();
-  }
-});
-
-// Tombol Pause dan Resume
-document.getElementById("pauseButton").addEventListener("click", function () {
-  isPaused = true; // Pause game
-  document.getElementById("pauseButton").style.display = "none";
-  document.getElementById("resumeButton").style.display = "inline";
-  var dino = document.getElementById("dino");
-  dino.setAttribute("class", "freeze");
-  backgroundMusic.pause(); // Pause backsound saat game di-pause
-});
-
-document.getElementById("resumeButton").addEventListener("click", function () {
-  isPaused = false; // Resume game
-  document.getElementById("resumeButton").style.display = "none";
-  document.getElementById("pauseButton").style.display = "inline";
-  var dino = document.getElementById("dino");
-  dino.setAttribute("class", "");
-  setBackgroundMoving(); // Lanjutkan background
-  setBoxMoving(); // Lanjutkan pergerakan box
-  backgroundMusic.play(); // Play backsound saat game di-resume
-});
