@@ -51,6 +51,7 @@ function setBoxMoving() {
       ) {
         var collisionSfx = document.getElementById("collisionSfx");
         collisionSfx.play();
+
         Swal.fire({
           title: "Game Over!",
           text: "Score Anda: " + document.getElementById("score").innerHTML,
@@ -58,8 +59,18 @@ function setBoxMoving() {
           imageWidth: 200,
           imageHeight: 200,
           confirmButtonText: "RESTART",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          preConfirm: () => {
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                resolve(); // Lanjutkan setelah waktu jeda
+              }, 1500); // Waktu jeda sebelum reset game
+              Swal.showLoading(); // Tampilkan spinner loading
+            });
+          },
         }).then(() => {
-          setTimeout(resetGame, 1500);
+          resetGame(); // Panggil fungsi reset setelah "RESTART"
         });
         dino.setAttribute("class", "freeze");
         isMoving = false;
