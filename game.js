@@ -52,26 +52,61 @@ function setBoxMoving() {
         var collisionSfx = document.getElementById("collisionSfx");
         collisionSfx.play();
 
-        Swal.fire({
-          title: "Game Over!",
-          text: "Score Anda: " + document.getElementById("score").innerHTML,
-          imageUrl: "images/emot.png",
-          imageWidth: 200,
-          imageHeight: 200,
-          confirmButtonText: "RESTART",
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          preConfirm: () => {
-            return new Promise((resolve) => {
-              setTimeout(() => {
-                resolve(); // Lanjutkan setelah waktu jeda
-              }, 1500); // Waktu jeda sebelum reset game
-              Swal.showLoading(); // Tampilkan spinner loading
-            });
-          },
-        }).then(() => {
-          resetGame(); // Panggil fungsi reset setelah "RESTART"
-        });
+        // Simpan skor sebelum menampilkan SweetAlert
+        let currentScore = parseInt(document.getElementById("score").innerHTML);
+        saveScore(currentScore); // Simpan skor ke localStorage
+
+        let highScores = getHighScores(); // Ambil daftar skor tertinggi
+        let highestScore = highScores.length > 0 ? highScores[0] : 0; // Skor tertinggi saat ini
+
+        if (currentScore >= highestScore) {
+          // Jika skor baru adalah yang tertinggi, tampilkan SweetAlert dengan piala
+          Swal.fire({
+            title: "Selamat!",
+            text: "Anda mencapai peringkat 1 dengan skor: " + currentScore,
+            imageUrl: "images/piala.png", // Ubah dengan ikon piala
+            imageWidth: 200,
+            imageHeight: 200,
+            confirmButtonText: "RESTART",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            preConfirm: () => {
+              return new Promise((resolve) => {
+                setTimeout(() => {
+                  resolve();
+                }, 1500);
+                Swal.showLoading();
+              });
+            },
+          }).then(() => {
+            resetGame(); // Panggil fungsi reset setelah "RESTART"
+            displayHighScores(); // Tampilkan leaderboard
+          });
+        } else {
+          // Jika skor tidak mencapai peringkat 1, tampilkan SweetAlert biasa
+          Swal.fire({
+            title: "Game Over!",
+            text: "Score Anda: " + currentScore,
+            imageUrl: "images/emot.png", // Ubah dengan ikon game over biasa
+            imageWidth: 200,
+            imageHeight: 200,
+            confirmButtonText: "RESTART",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            preConfirm: () => {
+              return new Promise((resolve) => {
+                setTimeout(() => {
+                  resolve();
+                }, 1500);
+                Swal.showLoading();
+              });
+            },
+          }).then(() => {
+            resetGame(); // Panggil fungsi reset setelah "RESTART"
+            displayHighScores(); // Tampilkan leaderboard
+          });
+        }
+
         dino.setAttribute("class", "freeze");
         isMoving = false;
         backgroundMusic.pause(); // Pause backsound saat game over
@@ -85,9 +120,13 @@ setBoxMoving();
 
 function jump() {
   if (!isPaused && !isJumping) {
-    // Pastikan dino tidak bisa lompat lagi jika sudah melompat
     isJumping = true; // Set flag bahwa Dino sedang melompat
     var dino = document.getElementById("dino");
+
+    // Mainkan SFX lompat
+    var jumpSfx = document.getElementById("jumpSfx");
+    jumpSfx.play();
+
     dino.style.marginTop = "30px";
     dino.setAttribute("class", "freeze");
     setTimeout(function () {
@@ -133,4 +172,45 @@ document.getElementById("resumeButton").addEventListener("click", function () {
   setBackgroundMoving(); // Lanjutkan background
   setBoxMoving(); // Lanjutkan pergerakan box
   backgroundMusic.play(); // Play backsound saat game di-resume
+});
+
+// Fungsi untuk menyimpan skor ke localStorage
+function saveScore(score) {
+  let scores = JSON.parse(localStorage.getItem("dinoScores")) || []; // Ambil data dari localStorage atau buat array kosong
+  if (!scores.includes(score)) {
+    scores.push(score); // Hanya tambahkan skor jika belum ada di daftar
+    localStorage.setItem("dinoScores", JSON.stringify(scores)); // Simpan kembali ke localStorage
+  }
+}
+
+// Fungsi untuk mendapatkan skor tertinggi
+function getHighScores() {
+  let scores = JSON.parse(localStorage.getItem("dinoScores")) || []; // Ambil data dari localStorage
+  scores.sort((a, b) => b - a); // Urutkan dari yang tertinggi
+  return [...new Set(scores)].slice(0, 5); // Hapus duplikat dan ambil 5 skor tertinggi
+}
+
+// Tampilkan skor tertinggi di leaderboard (optional, bisa tambahkan HTML untuk ini)
+function displayHighScores() {
+  let highScores = getHighScores();
+  let leaderboard = document.getElementById("leaderboard"); // Pastikan ada elemen HTML dengan id="leaderboard"
+  leaderboard.innerHTML = ""; // Kosongkan dulu
+
+  highScores.forEach((score, index) => {
+    let scoreElement = document.createElement("li");
+    scoreElement.textContent = `Peringkat ${index + 1}: ${score}`;
+    leaderboard.appendChild(scoreElement);
+  });
+}
+
+// Fungsi untuk memeriksa apakah skor terbaru adalah yang tertinggi
+function isNewHighScore(score) {
+  let scores = JSON.parse(localStorage.getItem("dinoScores")) || [];
+  if (scores.length === 0) return true; // Jika belum ada skor, otomatis skor baru jadi yang tertinggi
+  let highScore = Math.max(...scores); // Cari skor tertinggi saat ini
+  return score > highScore; // Bandingkan skor baru dengan skor tertinggi
+}
+window.addEventListener("DOMContentLoaded", function () {
+  // Hapus data skor di localStorage saat halaman dimuat
+  localStorage.removeItem("dinoScores");
 });
